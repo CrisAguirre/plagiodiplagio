@@ -22,6 +22,9 @@
 .side label { display: grid; gap: 4px; font-size: .85rem; margin: 6px 0; }
 .side input[type="text"], .side input:not([type]) { padding: 6px 8px; border: 1px solid #ccc; border-radius: 6px; width: 100%; }
 .row { display: flex; gap: 12px; flex-wrap: wrap; }
+.doc-list { display: grid; gap: 6px; margin: 8px 0 12px; }
+.doc-list button { text-align: left; padding: 8px 10px; border-radius: 8px; border: 1px solid #ccc; background: #fff; cursor: pointer; }
+.doc-list button.active { border-color: #1e90ff; background: #eef6ff; }
 
 @media (max-width: 860px) {
   .layout { grid-template-columns: 1fr; }

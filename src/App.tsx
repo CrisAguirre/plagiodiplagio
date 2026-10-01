@@ -2,8 +2,28 @@ import { useState } from 'react'
 import './App.css'
 import DocEditor from './components/DocEditor'
 
+const BUNDLED_DOCS = [
+  { id: '2-hispanoamerica.pdf', label: '2 - Hispanoamérica (23 págs)' },
+  { id: '3-medcali.pdf', label: '3 - Med Cali (7 págs)' },
+  { id: '5-psiquiatria.pdf', label: '5 - Psiquiatría (8 págs)' },
+  { id: '6-fisiatria.pdf', label: '6 - Fisiatría (4 págs)' },
+]
+
 function App() {
   const [file, setFile] = useState<File | null>(null)
+  const [loading, setLoading] = useState<string | null>(null)
+
+  const loadBundled = async (id: string) => {
+    setLoading(id)
+    try {
+      const r = await fetch(`/docs/${id}`)
+      if (!r.ok) throw new Error(`HTTP ${r.status}`)
+      const blob = await r.blob()
+      setFile(new File([blob], id, { type: 'application/pdf' }))
+    } finally {
+      setLoading(null)
+    }
+  }
 
   return (
     <div className="app">
@@ -15,9 +35,19 @@ function App() {
       <main className="layout">
         <aside className="panel">
           <h2>1. Cargar documento</h2>
-          <p className="muted">
-            Sube un PDF escaneado (ej. copia de <code>docs/</code>). Todo queda local salvo modo pro.
-          </p>
+          <p className="muted">Elige uno del proyecto o sube otro. Todo queda local salvo modo pro.</p>
+          <div className="doc-list">
+            {BUNDLED_DOCS.map((d) => (
+              <button
+                key={d.id}
+                disabled={loading !== null}
+                onClick={() => loadBundled(d.id)}
+                className={file?.name === d.id ? 'active' : ''}
+              >
+                {loading === d.id ? 'Cargando…' : d.label}
+              </button>
+            ))}
+          </div>
           <input
             type="file"
             accept="application/pdf"
