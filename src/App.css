@@ -7,9 +7,21 @@
 .panel h2 { font-size: 1rem; margin: 16px 0 8px; }
 .panel h2:first-child { margin-top: 0; }
 .muted { opacity: .75; font-size: .9rem; }
-.canvas-zone { border: 1px dashed #aaa; border-radius: 12px; min-height: 60vh; display: grid; place-items: center; }
-.placeholder { text-align: center; opacity: .7; }
+.canvas-zone { border: 1px dashed #aaa; border-radius: 12px; min-height: 60vh; display: grid; place-items: center; overflow: auto; }
+.placeholder { text-align: center; opacity: .7; padding: 24px; }
 .env { margin-top: 16px; padding-top: 12px; border-top: 1px solid #eee; }
+
+.editor { width: 100%; display: flex; flex-direction: column; gap: 10px; padding: 12px; }
+.toolbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.toolbar button { padding: 6px 12px; border-radius: 8px; border: 1px solid #ccc; background: #fff; cursor: pointer; }
+.toolbar button:disabled { opacity: .45; cursor: default; }
+.toolbar button.danger { border-color: #e66; color: #c00; }
+.stage-wrap { overflow: auto; border: 1px solid #e2e2e2; border-radius: 8px; background: #f7f7f7; display: grid; place-items: center; padding: 8px; }
+.side { border-top: 1px solid #eee; padding-top: 8px; }
+.side h3 { margin: 4px 0 8px; font-size: .95rem; }
+.side label { display: grid; gap: 4px; font-size: .85rem; margin: 6px 0; }
+.side input[type="text"], .side input:not([type]) { padding: 6px 8px; border: 1px solid #ccc; border-radius: 6px; width: 100%; }
+.row { display: flex; gap: 12px; flex-wrap: wrap; }
 
 @media (max-width: 860px) {
   .layout { grid-template-columns: 1fr; }
