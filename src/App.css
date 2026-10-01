@@ -1,0 +1,17 @@
+.app { display: flex; flex-direction: column; min-height: 100vh; }
+.topbar { padding: 16px 20px; border-bottom: 1px solid #ddd; }
+.topbar h1 { margin: 0; font-size: 1.4rem; }
+.topbar p { margin: 4px 0 0; opacity: .7; }
+.layout { display: grid; grid-template-columns: 340px 1fr; gap: 16px; padding: 16px 20px; flex: 1; }
+.panel { border: 1px solid #ddd; border-radius: 12px; padding: 16px; height: fit-content; }
+.panel h2 { font-size: 1rem; margin: 16px 0 8px; }
+.panel h2:first-child { margin-top: 0; }
+.muted { opacity: .75; font-size: .9rem; }
+.canvas-zone { border: 1px dashed #aaa; border-radius: 12px; min-height: 60vh; display: grid; place-items: center; }
+.placeholder { text-align: center; opacity: .7; }
+.env { margin-top: 16px; padding-top: 12px; border-top: 1px solid #eee; }
+
+@media (max-width: 860px) {
+  .layout { grid-template-columns: 1fr; }
+  .canvas-zone { min-height: 50vh; order: -1; }
+}
