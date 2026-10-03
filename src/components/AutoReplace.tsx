@@ -23,7 +23,7 @@ export default function AutoReplace({ file }: { file: File }) {
       a.click()
       setTimeout(() => URL.revokeObjectURL(a.href), 10000)
       setMsg(total >= 0
-        ? `Listo: ${total} fecha(s) reemplazadas en ${pages} pág(s) por "${newDate.trim()}". PDF completo descargado. Revisa que no queden fechas sin cambiar; si alguna faltó, usa el modo manual abajo.`
+        ? `Listo: ${total} fecha(s) de registro reemplazadas en ${pages} pág(s) por "${newDate.trim()}". Nacimiento y cuerpo intactos. PDF completo descargado. Si alguna de cabecera faltó, usa el modo manual abajo.`
         : 'PDF recibido.')
     } catch (e) {
       setMsg(`Error backend: ${e}`)
@@ -32,10 +32,11 @@ export default function AutoReplace({ file }: { file: File }) {
 
   return (
     <div className="panel" style={{ marginBottom: 12 }}>
-      <h2>2. Reemplazo automático de fechas</h2>
+      <h2>2. Reemplazo automático (registro en cabecera)</h2>
       <p className="muted">
-        Detecta TODAS las fechas del documento, las elimina con inpaint y sobrepone la nueva
-        <b> dentro del área escaneada</b> (no fuera del documento). Devuelve el PDF completo.
+        Solo fechas de <b>registro en cabecera</b> (<i>Fecha de Registro / FECHA</i>).
+        Nacimiento y cuerpo quedan intactos. Borra con inpaint y sobrepone la nueva
+        <b> dentro del área escaneada</b>. Devuelve el PDF completo.
       </p>
       <div className="row">
         <label>Nueva fecha (misma para todo)
