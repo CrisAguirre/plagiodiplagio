@@ -26,6 +26,7 @@ export default function DocEditor({ file }: { file: File }) {
   const [stageW, setStageW] = useState(800)
   const [stageH, setStageH] = useState(1000)
   const [renderW, setRenderW] = useState(0)
+  const [renderH, setRenderH] = useState(0)
   const [patches, setPatches] = useState<Patch[]>([])
   const [selId, setSelId] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
@@ -63,6 +64,7 @@ export default function DocEditor({ file }: { file: File }) {
         if (!alive) return
         setBg(img)
         setRenderW(width)
+        setRenderH(height)
         setStageW(Math.floor(width * s))
         setStageH(Math.floor(height * s))
         setMsg('')
@@ -108,20 +110,14 @@ export default function DocEditor({ file }: { file: File }) {
   }
 
   const toBox1000 = (p: Patch) => {
-    if (!renderW || !bg) return null
-    const H = bg.naturalHeight / (bg.naturalWidth / renderW) || 1
-    void H
-    // renderW/H reales del canvas pdf.js; usamos proporción sobre imagen natural escalada
-    const imgW = (bg as HTMLImageElement).width || renderW
-    void imgW
-    // Simplificado: coords en píxeles de render -> 0-1000
-    const W = renderW
-    const realH = stageH / (scale || 1)
+    if (!renderW || !renderH) return null
+    // Parches en coords de render (Stage escalado, hijos sin escalar).
+    // Backend borra DE VERDAD con inpaint en esos píxeles, no tapa.
     return {
-      x0: (p.x / W) * 1000,
-      y0: (p.y / realH) * 1000,
-      x1: ((p.x + p.w) / W) * 1000,
-      y1: ((p.y + p.h) / realH) * 1000,
+      x0: (p.x / renderW) * 1000,
+      y0: (p.y / renderH) * 1000,
+      x1: ((p.x + p.w) / renderW) * 1000,
+      y1: ((p.y + p.h) / renderH) * 1000,
     }
   }
 
@@ -161,10 +157,10 @@ export default function DocEditor({ file }: { file: File }) {
         <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page <= 1}>‹</button>
         <span>Pág {page}/{numPages}</span>
         <button onClick={() => setPage((p) => Math.min(numPages, p + 1))} disabled={page >= numPages}>›</button>
-        <button onClick={addPatch}>+ Tapa fecha</button>
-        <button onClick={onExportClient}>Exportar PDF</button>
-        <button onClick={onProBackend} disabled={busy || !sel}>
-          {busy ? 'Pro…' : 'Modo pro (backend)'}
+        <button onClick={addPatch}>+ Borrar fecha</button>
+        <button onClick={onExportClient} title="Solo tapa local, deja parche plano">Tapa rápida</button>
+        <button onClick={onProBackend} disabled={busy || !sel} title="Borra de verdad con inpaint + escribe nuevo texto">
+          {busy ? 'Borrando…' : 'Borrar de verdad (backend)'}
         </button>
         {sel && <button className="danger" onClick={() => { setPatches((ps) => ps.filter((p) => p.id !== selId)); setSelId(null) }}>Eliminar</button>}
       </div>
@@ -181,7 +177,7 @@ export default function DocEditor({ file }: { file: File }) {
           onMouseDown={(e) => { if (e.target === e.target.getStage()) setSelId(null) }}
         >
           <Layer>
-            {bg && <KImage image={bg} width={renderW} height={stageH / (scale || 1)} listening={false} />}
+            {bg && <KImage image={bg} width={renderW} height={renderH} listening={false} />}
             {patches.map((p) => (
               <Group
                 key={p.id}

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import './App.css'
 import DocEditor from './components/DocEditor'
+import AutoReplace from './components/AutoReplace'
 
 const BUNDLED_DOCS = [
   { id: '2-hispanoamerica.pdf', label: '2 - Hispanoamérica (23 págs)' },
@@ -29,13 +30,13 @@ function App() {
     <div className="app">
       <header className="topbar">
         <h1>plagiodiplagio</h1>
-        <p>Editor web responsive — Vite + React + Konva + pdf-lib + FastAPI</p>
+        <p>Reemplazo automático de fechas in-situ — detecta, borra con inpaint y sobrepone la nueva fecha</p>
       </header>
 
       <main className="layout">
         <aside className="panel">
           <h2>1. Cargar documento</h2>
-          <p className="muted">Elige uno del proyecto o sube otro. Todo queda local salvo modo pro.</p>
+          <p className="muted">Elige uno del proyecto o sube otro. Todo queda local salvo modo automático/pro.</p>
           <div className="doc-list">
             {BUNDLED_DOCS.map((d) => (
               <button
@@ -63,10 +64,18 @@ function App() {
           {!file && (
             <div className="placeholder">
               <p>Sube un PDF para empezar</p>
-              <span>Render pdf.js → tapas Konva → export pdf-lib / backend pro</span>
+              <span>Automático: detecta fechas → inpaint → nueva fecha in-situ → PDF completo</span>
             </div>
           )}
-          {file && <DocEditor key={file.name + file.size} file={file} />}
+          {file && (
+            <div className="editor">
+              <AutoReplace file={file} />
+              <details>
+                <summary className="muted">Revisión manual (fallback: 1 parche por vez si el OCR omitió alguna fecha)</summary>
+                <DocEditor key={file.name + file.size} file={file} />
+              </details>
+            </div>
+          )}
         </section>
       </main>
     </div>

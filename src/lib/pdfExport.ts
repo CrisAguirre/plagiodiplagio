@@ -24,7 +24,25 @@ export async function exportSinglePageToPdf(dataUrl: string, filename = 'editado
   setTimeout(() => URL.revokeObjectURL(a.href), 5000)
 }
 
-/** Modo pro: envía coords 0-1000 al backend Python (inpaint real). */
+/** Modo automático: reemplaza TODAS las fechas in-situ y devuelve el PDF COMPLETO. */
+export async function sendAutoReplace(args: {
+  file: File
+  new_text: string
+  dpi?: number
+}): Promise<{ blob: Blob; total: number; pages: number }> {
+  const fd = new FormData()
+  fd.append('file', args.file)
+  fd.append('new_text', args.new_text)
+  fd.append('dpi', String(args.dpi ?? 200))
+  const r = await fetch(apiUrl('/replace-dates'), { method: 'POST', body: fd })
+  if (!r.ok) throw new Error(`backend ${r.status}: ${await r.text()}`)
+  return {
+    blob: await r.blob(),
+    total: Number(r.headers.get('X-Replacements-Total') ?? -1),
+    pages: Number(r.headers.get('X-Pages') ?? -1),
+  }
+}
+/** Modo manual (fallback): 1 parche de 1 página con inpaint real. */
 export async function sendProEdit(args: {
   file: File
   page_index: number
